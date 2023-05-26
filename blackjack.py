@@ -183,12 +183,11 @@ class BJ_Game(object):
         else:
             print(self.dealer)
             self.__additional_cards(self.dealer)
-            if self.dealer.is_busted():
-                for player in self.still_playing:
+            for player in self.still_playing:
+                if self.dealer.is_busted():
                     player.win()
                     con[player.name].append("win")
-            else:
-                for player in self.still_playing:
+                else:
                     if player.total > self.dealer.total:
                         player.win()
                         con[player.name].append("win")
@@ -198,11 +197,13 @@ class BJ_Game(object):
                     else:
                         player.push()
                         con[player.name].append("push")
+                
+                    self.reward(player, con[player.name][0], con[player.name][1])
+                    
+                    if player.bank.count < bet:
+                        self.players.remove(player)
         for player in self.players:
-            self.reward(player, con[player.name][0], con[player.name][1])
             player.clear()
-            if player.bank.count < bet:
-                self.players.remove(player)
         self.dealer.clear()
         self.deck.full_up()
 
